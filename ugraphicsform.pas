@@ -13,13 +13,11 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
+    ExecuteBtn: TButton;
     CreateBtnWrite: TButton;
     CloseBtn: TButton;
-    CreateBtnLoad: TButton;
-    FileDisplay: TLabel;
-    HeadingRight: TPanel;
     Editor: TMemo;
-    Label1: TLabel;
+    InfoLabel: TLabel;
     LoadFile: TButton;
     Memo1: TMemo;
     OpenRegister: TOpenDialog;
@@ -28,10 +26,10 @@ type
     RegisterSG: TStringGrid;
     TabSetUp: TTabSheet;
     TabWrite: TTabSheet;
-    TabLoad: TTabSheet;
     TabExecute: TTabSheet;
     procedure CloseBtnClick(Sender: TObject);
     procedure CreateMachine(Sender: TObject);
+    procedure ExecuteBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LoadFileClick(Sender: TObject);
   private
@@ -42,7 +40,6 @@ type
 
 var
   Form1: TForm1;
-  FileSource : String;
   loadedList : TStringList;
   regM : RegisterMachine;
 
@@ -55,8 +52,8 @@ procedure TForm1.LoadFileClick(Sender: TObject);
 begin
     if OpenRegister.Execute then
        begin
-         FileSource := OpenRegister.FileName;
-         FileDisplay.Caption:= Copy(FileSource, LastDelimiter('\',FileSource) + 1, Length(FileSource));
+         Editor.Clear;
+         Editor.Lines.LoadFromFile(OpenRegister.FileName);
        end
     else ShowMessage('Kein File ausgewählt');
 
@@ -72,10 +69,7 @@ var
   i : Integer;
 begin
   loadedList := TStringList.Create;
-  if Sender = CreateBtnWrite then
-  loadedList.AddStrings(Editor.Lines)
-  else
-    loadedList.LoadFromFile(FileSource);
+  loadedList.AddStrings(Editor.Lines);
   regM := RegisterMachine.Create(loadedList);
   //ERROR HANDLING NECESSARY
   if regM.GetErrorMessage <> '' then
@@ -87,24 +81,45 @@ begin
       ColCount:= High(regM.GetRegisterData);
       RowCount:= 2;
       FixedRows:= 1;
+      //Height := RowCount * DefaultRowHeight;
+      //Width := ColCount * DefaultColWidth;
     end;
     for i := 0 to High(regM.GetRegisterData) - 1 do
     begin
-
+        RegisterSG.Cells[i, 0] := 'c(' + IntToStr(i + 1) + ')';
+        RegisterSg.Cells[i, 1] := '0';
     end;
   end;
 
-  Pages.Page[2].TabVisible:= true;
-  Pages.ActivePage := Pages.Pages[2];
+  TabSetUp.TabVisible:= true;
+  Pages.ActivePage := TabSetUp;
 
 end;
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TForm1.ExecuteBtnClick(Sender: TObject);
+var
+  values : array of Integer;
+  i : Integer;
 begin
+  SetLength(values, RegisterSG.ColCount - 1 );
+  for i := 0 to RegisterSG.ColCount - 1 do
+  begin
+    values[i] := StrtoInt(RegisterSG.Cells[i, 1]);
+  end;
+  regM.Execute(values);
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  s : TTextStyle;
+begin
+  Editor.Lines.LoadFromFile('Beispiele/Zahlenvergleich.txt');
   Pages.ActivePage := TabWrite;
   TabSetUp.TabVisible:= false;
   TabExecute.TabVisible:= false;
-  FileSource := '';
+  s := RegisterSG.DefaultTextStyle;
+  s.Alignment:=taCenter;
+  RegisterSG.DefaultTextStyle := s;
 end;
 
 end.

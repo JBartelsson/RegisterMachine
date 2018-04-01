@@ -17,6 +17,13 @@ type
   registerArray = array of integer;
   commandList = array of commandLine;
 
+  commandLog = record
+    command: commandLine;
+    sysOutput : String;
+    registers : registerArray;
+end;
+
+type
 
 
   { RegisterMachine }
@@ -27,22 +34,27 @@ type
     registerData: registerArray;
     programData: commandList;
     rawStringData: TStringList;
+    ExecuteLog: TStringList;
     errorMessage: string;
+    function LOAD(c : Integer) : String;
+    function STORE(c : Integer) : String;
 
   public
     constructor Create(rawStringList: TStringList);
     function GetRegisterData: registerArray;
     procedure SetRegisterData(NewValue: integer; Index: integer);
+    procedure SetRegisterData(NewArray: registerArray);
     function GetProgramData: commandList;
     procedure SetProgramData(NewValue: commandLine; Index: integer);
     function GetRawStringData: TStringList;
     procedure DeleteComments(var s: string; CommentSymbol: string);
     function GetErrorMessage: string;
+    function GetExecuteLog: TStringList;
     procedure SetErrorMessage(NewValue: string);
     procedure ProcessFile;
     procedure RenderRegisters;
     procedure RenderCommands;
-    procedure Execute;
+    procedure Execute(regs : registerArray);
   const
     commands: array[0..14] of string =
       ('LOAD', 'STORE', 'ADD', 'SUB', 'MULT', 'DIV', 'GOTO', 'END', 'CLOAD',
@@ -54,6 +66,19 @@ type
   end;
 
 implementation
+
+//REGISTER MACHINE FUNCTIONS
+function RegisterMachine.LOAD(c: Integer): String;
+begin
+  SetRegisterData(GetRegisterData[c], 0);
+  Result := 'Akkumulator lädt Zahl ' + IntToStr(GetRegisterData[c]) + ' aus c(' + IntToStr(c) + ')';
+end;
+
+function RegisterMachine.STORE(c: Integer): String;
+begin
+   SetRegisterData(GetRegisterData[0], c);
+     Result := 'Akkumulator speichert Zahl ' + IntToStr(GetRegisterData[c]) + ' in c(' + IntToStr(c) + ')';
+end;
 
 constructor RegisterMachine.Create(rawStringList: TStringList);
 begin
@@ -72,6 +97,11 @@ end;
 procedure RegisterMachine.SetRegisterData(NewValue: integer; Index: integer);
 begin
   registerData[Index] := NewValue;
+end;
+
+procedure RegisterMachine.SetRegisterData(NewArray: registerArray);
+begin
+  registerData := NewArray;
 end;
 
 function RegisterMachine.GetProgramData: commandList;
@@ -103,6 +133,11 @@ end;
 function RegisterMachine.GetErrorMessage: string;
 begin
   Result := errorMessage;
+end;
+
+function RegisterMachine.GetExecuteLog: TStringList;
+begin
+  Result := ExecuteLog;
 end;
 
 procedure RegisterMachine.SetErrorMessage(NewValue: string);
@@ -190,9 +225,26 @@ begin
   end;
 end;
 
-procedure RegisterMachine.Execute;
+procedure RegisterMachine.Execute(regs: registerArray);
+var
+  line : commandLine;
+  index, i : Integer;
 begin
-
+  SetRegisterData(0, 0);
+  for i := 0 to High(regs) do
+  begin
+  SetRegisterData(regs[i], i + 1);
+  end;
+  index := 0;
+  line.command:= ' ';
+  line.Value:= 0;
+  line := GetProgramData[0];
+  ShowMessage(LOAD(2));
+    //while line.command <> 'END' do
+    //begin
+    //
+    //
+    //end;
 end;
 
 end.
