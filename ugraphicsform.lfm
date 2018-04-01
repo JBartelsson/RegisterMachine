@@ -1,0 +1,151 @@
+object Form1: TForm1
+  Left = 511
+  Height = 835
+  Top = 125
+  Width = 1247
+  Caption = 'Form1'
+  ClientHeight = 835
+  ClientWidth = 1247
+  OnCreate = FormCreate
+  LCLVersion = '1.4.4.0'
+  object Pages: TPageControl
+    Left = 192
+    Height = 568
+    Top = 40
+    Width = 776
+    ActivePage = TabSetUp
+    TabIndex = 2
+    TabOrder = 0
+    object TabWrite: TTabSheet
+      Caption = 'Write'
+      ClientHeight = 540
+      ClientWidth = 768
+      object Editor: TMemo
+        Left = 8
+        Height = 394
+        Top = 80
+        Width = 756
+        ScrollBars = ssAutoBoth
+        TabOrder = 0
+      end
+      object HeadingLeft: TPanel
+        Left = 8
+        Height = 62
+        Top = 8
+        Width = 756
+        Caption = 'WRITE'
+        Font.Height = -33
+        ParentFont = False
+        TabOrder = 1
+      end
+      object CreateBtnWrite: TButton
+        Left = 8
+        Height = 57
+        Top = 480
+        Width = 756
+        Caption = 'Create Register Machine'
+        Font.Height = -33
+        OnClick = CreateMachine
+        ParentFont = False
+        TabOrder = 2
+      end
+    end
+    object TabLoad: TTabSheet
+      Caption = 'Load'
+      ClientHeight = 540
+      ClientWidth = 768
+      object HeadingRight: TPanel
+        Left = 8
+        Height = 62
+        Top = 8
+        Width = 756
+        Caption = 'Pick your File'
+        Font.Height = -33
+        ParentFont = False
+        TabOrder = 0
+      end
+      object FileDisplay: TLabel
+        Left = 360
+        Height = 15
+        Top = 176
+        Width = 56
+        Caption = 'FileDisplay'
+        ParentColor = False
+      end
+      object LoadFile: TButton
+        Left = 8
+        Height = 56
+        Top = 80
+        Width = 752
+        Caption = 'Open File'
+        OnClick = LoadFileClick
+        TabOrder = 1
+      end
+      object CreateBtnLoad: TButton
+        Left = 8
+        Height = 57
+        Top = 480
+        Width = 756
+        Caption = 'Create Register Machine'
+        Font.Height = -33
+        OnClick = CreateMachine
+        ParentFont = False
+        TabOrder = 2
+      end
+    end
+    object TabSetUp: TTabSheet
+      Caption = 'Set'
+      ClientHeight = 540
+      ClientWidth = 768
+      TabVisible = False
+      object RegisterSG: TStringGrid
+        Left = 0
+        Height = 96
+        Top = 32
+        Width = 768
+        ColCount = 3
+        FixedCols = 0
+        RowCount = 2
+        TabOrder = 0
+      end
+      object Label1: TLabel
+        Left = 240
+        Height = 15
+        Top = 8
+        Width = 266
+        Caption = 'Set your Registers (Empty Registers will be set to 0)'
+        ParentColor = False
+      end
+    end
+    object TabExecute: TTabSheet
+      Caption = 'Execute'
+      ClientHeight = 540
+      ClientWidth = 768
+      object Memo1: TMemo
+        Left = 148
+        Height = 363
+        Top = 149
+        Width = 364
+        Lines.Strings = (
+          'Memo1'
+        )
+        TabOrder = 0
+      end
+    end
+  end
+  object CloseBtn: TButton
+    Left = 8
+    Height = 177
+    Top = 640
+    Width = 1227
+    Caption = 'Close'
+    OnClick = CloseBtnClick
+    TabOrder = 1
+  end
+  object OpenRegister: TOpenDialog
+    Title = 'Eine Registerdatei öffnen'
+    Filter = 'Clemens und Johann Datei (.txt)|*.txt'
+    left = 1144
+    top = 672
+  end
+end

@@ -1,0 +1,8 @@
+//wdwdw
+1 LOAD 1
+2 STORE 2
+3 END
+
+
+
+5 WURST X //MEINE GÜTE
