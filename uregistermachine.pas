@@ -42,6 +42,7 @@ type
     procedure ProcessFile;
     procedure RenderRegisters;
     procedure RenderCommands;
+    procedure Execute;
   const
     commands: array[0..14] of string =
       ('LOAD', 'STORE', 'ADD', 'SUB', 'MULT', 'DIV', 'GOTO', 'END', 'CLOAD',
@@ -187,6 +188,11 @@ begin
       SetErrorMessage('index ' + IntToStr(i) + ' is not initialized');
     end;
   end;
+end;
+
+procedure RegisterMachine.Execute;
+begin
+
 end;
 
 end.
