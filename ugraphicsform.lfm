@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 547
+  Left = 567
   Height = 835
-  Top = 103
+  Top = 74
   Width = 1247
   Caption = 'Form1'
   ClientHeight = 835
@@ -14,7 +14,7 @@ object Form1: TForm1
     Top = 40
     Width = 776
     ActivePage = TabSetUp
-    TabIndex = 2
+    TabIndex = 1
     TabOrder = 0
     object TabWrite: TTabSheet
       Caption = 'Write'
@@ -32,7 +32,7 @@ object Form1: TForm1
         Left = 8
         Height = 62
         Top = 8
-        Width = 756
+        Width = 436
         Caption = 'WRITE'
         Font.Height = -33
         ParentFont = False
@@ -49,48 +49,14 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 2
       end
-    end
-    object TabLoad: TTabSheet
-      Caption = 'Load'
-      ClientHeight = 540
-      ClientWidth = 768
-      object HeadingRight: TPanel
-        Left = 8
+      object LoadFile: TButton
+        Left = 448
         Height = 62
         Top = 8
-        Width = 756
-        Caption = 'Pick your File'
-        Font.Height = -33
-        ParentFont = False
-        TabOrder = 0
-      end
-      object FileDisplay: TLabel
-        Left = 360
-        Height = 15
-        Top = 176
-        Width = 56
-        Caption = 'FileDisplay'
-        ParentColor = False
-      end
-      object LoadFile: TButton
-        Left = 8
-        Height = 56
-        Top = 80
-        Width = 752
-        Caption = 'Open File'
+        Width = 312
+        Caption = 'Load File'
         OnClick = LoadFileClick
-        TabOrder = 1
-      end
-      object CreateBtnLoad: TButton
-        Left = 8
-        Height = 57
-        Top = 480
-        Width = 756
-        Caption = 'Create Register Machine'
-        Font.Height = -33
-        OnClick = CreateMachine
-        ParentFont = False
-        TabOrder = 2
+        TabOrder = 3
       end
     end
     object TabSetUp: TTabSheet
@@ -100,21 +66,42 @@ object Form1: TForm1
       TabVisible = False
       object RegisterSG: TStringGrid
         Left = 0
-        Height = 96
-        Top = 32
+        Height = 112
+        Top = 40
         Width = 768
-        ColCount = 3
+        BorderStyle = bsNone
+        ColCount = 0
+        DefaultColWidth = 65
+        DefaultRowHeight = 50
         FixedCols = 0
-        RowCount = 2
+        FixedRows = 0
+        Font.Height = -27
+        GridLineWidth = 0
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goSmoothScroll]
+        ParentFont = False
+        RowCount = 0
+        ScrollBars = ssAutoHorizontal
         TabOrder = 0
+        TitleFont.Height = -27
       end
-      object Label1: TLabel
+      object InfoLabel: TLabel
         Left = 240
         Height = 15
         Top = 8
-        Width = 266
-        Caption = 'Set your Registers (Empty Registers will be set to 0)'
+        Width = 320
+        Caption = 'Belege die Register (Unbelegte Register werden auf 0 gesetzt)'
         ParentColor = False
+      end
+      object ExecuteBtn: TButton
+        Left = 0
+        Height = 73
+        Top = 160
+        Width = 763
+        Caption = 'Registermaschine ausführen'
+        Font.Height = -33
+        OnClick = ExecuteBtnClick
+        ParentFont = False
+        TabOrder = 1
       end
     end
     object TabExecute: TTabSheet
