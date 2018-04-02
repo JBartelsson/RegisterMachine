@@ -121,11 +121,13 @@ end;
 //EXECUTE
 procedure TForm1.ExecuteBtnClick(Sender: TObject);
 var
-  values : array of Integer;
+  temp, values: registerArray;
   i,j : Integer;
   h : commandLine;
+
 begin
   SetLength(values, RegisterSG.ColCount - 1 );
+  SetLength(temp, 0);
   for i := 0 to RegisterSG.ColCount - 1 do
   begin
     values[i] := StrtoInt(RegisterSG.Cells[i, 1]);
@@ -149,7 +151,17 @@ begin
       Cells[2, i] := regM.GetExecuteLog[i - 1].sysOutput;
     end;
     for j := 0 to High(regM.GetExecuteLog[i - 1].registers) do
+    begin
+    //ExecuteSG.Canvas.Brush.Color:= clwhite;
+
     ExecuteSG.Cells[3 + j, i] := IntToStr(regM.GetExecuteLog[i -1].registers[j]);
+    if i <> 1 then
+    begin
+       if regM.GetExecuteLog[i - 1].registers[j] <> temp[j] then
+          ExecuteSG.Cells[3 + j, i] := ExecuteSG.Cells[3 + j, i] + '*';
+       end;
+    end;
+    temp := Copy(regM.GetExecuteLog[i -1].registers, 0, Length(regM.GetExecuteLog[i -1].registers));
   end;
 
 
