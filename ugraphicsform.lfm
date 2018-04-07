@@ -1,74 +1,178 @@
-object Form1: TForm1
-  Left = 567
-  Height = 835
-  Top = 74
-  Width = 1247
-  Caption = 'Form1'
-  ClientHeight = 835
-  ClientWidth = 1247
+object ReMEdit: TReMEdit
+  Left = 528
+  Height = 600
+  Top = 122
+  Width = 777
+  Caption = 'ReMEdit 1.0'
+  ClientHeight = 600
+  ClientWidth = 777
+  Color = clSilver
   OnCreate = FormCreate
   LCLVersion = '1.4.4.0'
   object Pages: TPageControl
-    Left = 192
+    Left = 0
     Height = 568
-    Top = 40
-    Width = 776
-    ActivePage = TabExecute
-    TabIndex = 2
+    Top = 0
+    Width = 777
+    ActivePage = TabWrite
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    TabIndex = 0
     TabOrder = 0
     object TabWrite: TTabSheet
-      Caption = 'Write'
+      Caption = 'Erstellen'
       ClientHeight = 540
-      ClientWidth = 768
-      object Editor: TMemo
-        Left = 8
-        Height = 394
-        Top = 80
-        Width = 756
-        ScrollBars = ssAutoBoth
+      ClientWidth = 769
+      ParentFont = False
+      object HeadingLeft: TPanel
+        Left = 0
+        Height = 62
+        Top = 4
+        Width = 441
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Right = 1
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Caption = 'Erstelle oder öffne eine Registermaschine'
+        Color = clSilver
+        Constraints.MinWidth = 440
+        Font.Height = -23
+        ParentColor = False
+        ParentFont = False
         TabOrder = 0
       end
-      object HeadingLeft: TPanel
-        Left = 8
-        Height = 62
-        Top = 8
-        Width = 436
-        Caption = 'WRITE'
-        Font.Height = -33
-        ParentFont = False
-        TabOrder = 1
-      end
       object CreateBtnWrite: TButton
-        Left = 8
-        Height = 57
-        Top = 480
-        Width = 756
-        Caption = 'Create Register Machine'
+        AnchorSideTop.Control = Editor
+        AnchorSideTop.Side = asrBottom
+        Left = 0
+        Height = 61
+        Top = 476
+        Width = 769
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderSpacing.Top = 2
+        Caption = 'Registermaschine erstellen'
         Font.Height = -33
         OnClick = CreateMachine
         ParentFont = False
-        TabOrder = 2
+        TabOrder = 1
       end
       object LoadFile: TButton
-        Left = 448
+        AnchorSideLeft.Control = HeadingLeft
+        AnchorSideLeft.Side = asrBottom
+        Left = 442
         Height = 62
-        Top = 8
-        Width = 312
-        Caption = 'Load File'
+        Top = 4
+        Width = 167
+        Anchors = [akTop, akLeft, akRight]
+        Caption = 'Registermaschine öffnen'
+        Constraints.MinWidth = 165
         OnClick = LoadFileClick
+        TabOrder = 2
+      end
+      object SaveFile: TButton
+        AnchorSideLeft.Control = LoadFile
+        AnchorSideLeft.Side = asrBottom
+        Left = 609
+        Height = 62
+        Top = 4
+        Width = 160
+        Anchors = [akTop, akLeft, akRight]
+        Caption = 'Registermaschine speichern'
+        Constraints.MinWidth = 160
+        OnClick = SaveFileClick
         TabOrder = 3
+      end
+      object Editor: TMemo
+        Left = 0
+        Height = 402
+        Top = 72
+        Width = 769
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Font.Name = 'Courier New'
+        ParentFont = False
+        PopupMenu = fillIndicesPop
+        ScrollBars = ssAutoBoth
+        TabOrder = 4
+      end
+    end
+    object TabError: TTabSheet
+      Caption = 'Nachrichten'
+      ClientHeight = 540
+      ClientWidth = 769
+      object HeadingError: TPanel
+        Left = 8
+        Height = 50
+        Top = 8
+        Width = 752
+        Anchors = [akTop, akLeft, akRight]
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Caption = 'Die Registermaschine enthält Fehler'
+        Color = clRed
+        Font.Height = -27
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+      end
+      object ErrorOutput: TMemo
+        Left = 8
+        Height = 458
+        Top = 64
+        Width = 752
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        ReadOnly = True
+        TabOrder = 1
       end
     end
     object TabSetUp: TTabSheet
-      Caption = 'Set'
+      Caption = 'Ausführen'
       ClientHeight = 540
-      ClientWidth = 768
+      ClientWidth = 769
       TabVisible = False
+      object SpeedContainer: TPanel
+        AnchorSideLeft.Side = asrBottom
+        Left = 176
+        Height = 50
+        Top = 200
+        Width = 418
+        Anchors = [akTop, akLeft, akRight]
+        ClientHeight = 50
+        ClientWidth = 418
+        TabOrder = 4
+        object SpeedTrackBar: TTrackBar
+          AnchorSideLeft.Side = asrCenter
+          Left = 240
+          Height = 39
+          Top = 6
+          Width = 170
+          Max = 1500
+          Min = 100
+          PageSize = 10
+          Position = 100
+          ScalePos = trLeft
+          TickStyle = tsManual
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 0
+        end
+        object SpeedLabel: TLabel
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideRight.Control = SpeedTrackBar
+          Left = 24
+          Height = 37
+          Top = 4
+          Width = 216
+          Anchors = [akTop, akLeft, akRight]
+          Caption = 'Geschwindigkeit'
+          Font.Height = -27
+          ParentColor = False
+          ParentFont = False
+        end
+      end
       object RegisterSG: TStringGrid
         Left = 0
         Height = 112
         Top = 40
-        Width = 768
+        Width = 769
+        Anchors = [akTop, akLeft, akRight]
         BorderStyle = bsNone
         ColCount = 0
         DefaultColWidth = 65
@@ -85,58 +189,101 @@ object Form1: TForm1
         TitleFont.Height = -27
       end
       object InfoLabel: TLabel
-        Left = 240
-        Height = 15
-        Top = 8
-        Width = 320
+        Left = 112
+        Height = 28
+        Top = 0
+        Width = 534
+        Anchors = [akTop, akLeft, akRight]
         Caption = 'Belege die Register (Unbelegte Register werden auf 0 gesetzt)'
+        Font.Height = -20
         ParentColor = False
-      end
-      object ExecuteBtn: TButton
-        Left = 0
-        Height = 73
-        Top = 160
-        Width = 763
-        Caption = 'Registermaschine ausführen'
-        Font.Height = -33
-        OnClick = ExecuteBtnClick
         ParentFont = False
-        TabOrder = 1
       end
-    end
-    object TabExecute: TTabSheet
-      Caption = 'Execute'
-      ClientHeight = 540
-      ClientWidth = 768
       object ExecuteSG: TStringGrid
         Left = 0
-        Height = 416
-        Top = 40
-        Width = 768
+        Height = 288
+        Top = 256
+        Width = 770
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderStyle = bsNone
+        Color = clNone
         ColCount = 3
         FixedCols = 0
-        TabOrder = 0
+        TabOrder = 1
+        OnDrawCell = ExecuteSGDrawCell
         ColWidths = (
-          22
-          77
-          280
+          27
+          88
+          288
         )
+      end
+      object ExecuteBtn: TBitBtn
+        Left = 0
+        Height = 49
+        Top = 152
+        Width = 608
+        Caption = 'Registermaschine ausführen'
+        Default = True
+        Font.Height = -27
+        Kind = bkOK
+        Layout = blGlyphRight
+        ModalResult = 1
+        OnClick = ExecuteBtnClick
+        ParentFont = False
+        TabOrder = 2
+      end
+      object CancelExecuteBtn: TBitBtn
+        AnchorSideLeft.Control = ExecuteBtn
+        AnchorSideLeft.Side = asrBottom
+        Left = 608
+        Height = 49
+        Top = 152
+        Width = 160
+        Anchors = [akTop, akLeft, akRight]
+        Caption = 'Abbrechen'
+        Font.Height = -27
+        Kind = bkCancel
+        Layout = blGlyphRight
+        ModalResult = 2
+        OnClick = CancelExecuteBtnClick
+        ParentFont = False
+        TabOrder = 3
       end
     end
   end
-  object CloseBtn: TButton
-    Left = 8
-    Height = 177
-    Top = 640
-    Width = 1227
-    Caption = 'Close'
+  object CloseBtn: TBitBtn
+    AnchorSideTop.Control = Pages
+    AnchorSideTop.Side = asrBottom
+    Left = 0
+    Height = 32
+    Top = 568
+    Width = 777
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Caption = 'Anwendung schließen'
+    Kind = bkClose
+    ModalResult = 11
     OnClick = CloseBtnClick
     TabOrder = 1
   end
   object OpenRegister: TOpenDialog
-    Title = 'Eine Registerdatei öffnen'
+    Title = 'Eine Registermaschine öffnen'
     Filter = 'Clemens und Johann Datei (.txt)|*.txt'
-    left = 1144
-    top = 672
+    InitialDir = 'Beispiele/'
+    left = 808
+    top = 216
+  end
+  object SaveRegister: TSaveDialog
+    InitialDir = 'Beispiele/'
+    left = 816
+    top = 264
+  end
+  object fillIndicesPop: TPopupMenu
+    left = 832
+    top = 152
+    object fillIndices: TMenuItem
+      Caption = 'Indices auffüllen'
+      ShortCut = 16454
+      OnClick = fillIndicesClick
+    end
   end
 end

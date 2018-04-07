@@ -41,7 +41,7 @@
       <Unit1>
         <Filename Value="ugraphicsform.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
+        <ComponentName Value="ReMEdit"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit1>
