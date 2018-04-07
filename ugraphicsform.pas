@@ -64,6 +64,7 @@ var
   markedCells: array of array[0..1] of integer;
   executeFinished: boolean;
   cancelExecute : boolean;
+  actualFile : String;
 
 implementation
 
@@ -100,15 +101,16 @@ begin
   begin
     Enabled := True;
     Visible := True;
-    ColCount := 3 + registerAmount;
+    ColCount := 4 + registerAmount;
     RowCount := 1;
-    Cells[0, 0] := 'b';
-    Cells[1, 0] := 'Zeile';
-    Cells[2, 0] := 'Effekt';
+    Cells[0,0] := 'i';
+    Cells[1, 0] := 'b';
+    Cells[2, 0] := 'Zeile';
+    Cells[3, 0] := 'Effekt';
   end;
   for i := 0 to registerAmount - 1 do
   begin
-    ExecuteSG.Cells[i + 3, 0] := 'c(' + IntToStr(i) + ')';
+    ExecuteSG.Cells[i + 4, 0] := 'c(' + IntToStr(i) + ')';
   end;
 end;
 
@@ -156,7 +158,9 @@ begin
   if SaveRegister.Execute then
   begin
     Editor.Lines.SaveToFile(SaveRegister.FileName);
+    actualFile := SaveRegister.FileName;
   end;
+
 end;
 
 procedure TReMEdit.fillIndicesClick(Sender: TObject);
@@ -199,6 +203,7 @@ begin
    cancelExecute:= true;
    CancelExecuteBtn.Enabled:= false;
    ExecuteBtn.Enabled:= true;
+   RegisterSG.Enabled:= true;
 end;
 
 //CREATE
@@ -206,7 +211,6 @@ procedure TReMEdit.CreateMachine(Sender: TObject);
 var
   i: integer;
 begin
-
   loadedList := TStringList.Create;
   loadedList.AddStrings(Editor.Lines);
   regM := RegisterMachine.Create(loadedList);
@@ -220,6 +224,8 @@ begin
   end
   else
   begin
+    if actualFile <> '' then
+    Editor.Lines.SaveToFile(actualFile);
     TabError.TabVisible:=false;
     with RegisterSG do
     begin
@@ -269,19 +275,20 @@ begin
     begin
       RowCount := RowCount + 1;
       Row := RowCount;
-      Cells[0, i] := regM.GetExecuteLog[i - 1].b;
+      Cells[0, i] := IntToStr(i);
+      Cells[1, i] := regM.GetExecuteLog[i - 1].b;
       h := regM.GetExecuteLog[i - 1].command;
       case h.command of
-        'END': Cells[1, i] := h.command;
-        '': Cells[1, i] := '';
+        'END': Cells[2, i] := h.command;
+        '': Cells[2, i] := '';
         else
-          Cells[1, i] := h.command + ' ' + IntToStr(h.Value);
+          Cells[2, i] := h.command + ' ' + IntToStr(h.Value);
       end;
-      Cells[2, i] := regM.GetExecuteLog[i - 1].sysOutput;
+      Cells[3, i] := regM.GetExecuteLog[i - 1].sysOutput;
     end;
     for j := 0 to High(regM.GetExecuteLog[i - 1].registers) do
     begin
-      ExecuteSG.Cells[3 + j, i] := IntToStr(regM.GetExecuteLog[i - 1].registers[j]);
+      ExecuteSG.Cells[4 + j, i] := IntToStr(regM.GetExecuteLog[i - 1].registers[j]);
     end;
 
     colorRegister := -1;
@@ -297,10 +304,6 @@ begin
       markedCells[High(markedCells)][0] := 3 + colorRegister;
       markedCells[High(markedCells)][1] := i;
     end;
-
-    if i = Length(regM.GetExecuteLog) then
-      executeFinished := True;
-
     Delay;
   end;
   CancelExecuteBtnClick(nil);
@@ -343,6 +346,7 @@ var
   s: TTextStyle;
 begin
   //VARIABLE INITIALIZATION
+  actualFile:= '';
   cancelExecute:= false;
   SetLength(markedCells, 0);
   Editor.Lines.LoadFromFile('Beispiele/Zahlenvergleich.txt');

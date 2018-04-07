@@ -175,7 +175,7 @@ begin
     if GetRegisterData[0] = 0 then
     begin
     b := j;
-    Result := 'A ist 0 -> Sprung zur' + IntToStr(j) + ' . Programmzeile';
+    Result := 'A ist 0 -> Sprung zur ' + IntToStr(j) + ' . Programmzeile';
     end
     else
     begin

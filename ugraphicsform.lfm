@@ -14,9 +14,9 @@ object ReMEdit: TReMEdit
     Height = 568
     Top = 0
     Width = 777
-    ActivePage = TabWrite
+    ActivePage = TabSetUp
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object TabWrite: TTabSheet
       Caption = 'Erstellen'
@@ -145,7 +145,7 @@ object ReMEdit: TReMEdit
           Top = 6
           Width = 170
           Max = 1500
-          Min = 100
+          Min = 1
           PageSize = 10
           Position = 100
           ScalePos = trLeft
@@ -207,14 +207,15 @@ object ReMEdit: TReMEdit
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderStyle = bsNone
         Color = clNone
-        ColCount = 3
+        ColCount = 4
         FixedCols = 0
         TabOrder = 1
         OnDrawCell = ExecuteSGDrawCell
         ColWidths = (
-          27
-          88
-          288
+          31
+          30
+          99
+          252
         )
       end
       object ExecuteBtn: TBitBtn
@@ -267,12 +268,13 @@ object ReMEdit: TReMEdit
   end
   object OpenRegister: TOpenDialog
     Title = 'Eine Registermaschine öffnen'
-    Filter = 'Clemens und Johann Datei (.txt)|*.txt'
+    Filter = 'Registermaschine (.txt)|*.txt'
     InitialDir = 'Beispiele/'
     left = 808
     top = 216
   end
   object SaveRegister: TSaveDialog
+    Filter = 'Registermaschine(.txt)|*.txt'
     InitialDir = 'Beispiele/'
     left = 816
     top = 264
