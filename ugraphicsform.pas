@@ -77,7 +77,7 @@ procedure TReMEdit.LoadFileClick(Sender: TObject);
 begin
   if (Editor.Lines.Count <> 0) and
     (MessageDlg('', 'Alle nicht gespeicherten Fortschritte gehen verloren. Fortfahren?',
-    mtConfirmation, mbOKCancel, -1) = mrOk) then
+    mtConfirmation, mbYesNo, -1) = mrYes) then
   begin
     if OpenRegister.Execute then
     begin
@@ -257,11 +257,6 @@ begin
       end;
       b := b + 1;
       Editor.Lines[i] := line;
-      //adds new index
-
-
-      //if i = pos.y then  //calculates new cursor position
-      //  pos.x := pos.x + Length(line) - oldStringLength;
     end;
   end;
   goToLine(pos.x - 1, pos.y);
@@ -299,7 +294,7 @@ begin
   if not fileSaved then
   begin
     if MessageDlg('Warnung', 'Sie haben ungespeicherte Änderungen. Wollen Sie die Anwendung wirklich schließen?',
-      mtWarning, mbOKCancel, 0) = mrOk then
+      mtWarning, mbYesNo, 0) = mrYes then
       CanClose := True
     else
       CanClose := False;
