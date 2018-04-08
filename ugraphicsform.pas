@@ -351,6 +351,7 @@ procedure TReMEdit.CreateMachine(Sender: TObject);
 var
   i: integer;
 begin
+  fillIndicesClick(nil);
   loadedList := TStringList.Create;
   loadedList.AddStrings(Editor.Lines);
   regM := RegisterMachine.Create(loadedList);
