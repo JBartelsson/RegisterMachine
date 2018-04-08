@@ -180,16 +180,14 @@ end;
 
 procedure TReMEdit.fillIndicesClick(Sender: TObject);
 var
-  i, j, b, oldStringLength: integer;
+  i, j, b, oldLineLength: integer;
   pos: TPOINT;
   line, refLine, referrer: string;
-  setB: boolean;
   forwardC, backwardC : array of array[0..1] of String;
 
-  procedure fillVerifiedCommands;
+  procedure fillVerifiedCommands; //firstly changes all commands to legal commands
   var
     k : Integer;
-    actLine : String;
   begin
     for k := 0 to Editor.Lines.Count - 1 do
     begin
@@ -199,20 +197,23 @@ var
     end;
   end;
 
-  procedure findIndexChanges;
+  procedure findIndexChanges; //finds lines which need a value change
   var
     l, m, refIndex, referrerIndex: Integer;
   begin
      for l:= 0 to Editor.Lines.Count - 1 do
      begin
-       if (AnsiMatchText(ExtractDelimited(2, Editor.Lines[l], [' ']), ['GOTO', 'JZERO', 'JNZERO'])) AND (RegisterMachine.verifyCommand(Editor.Lines[l]) = '') then //checks for changed values in the referred line of GOTO, JZERO and END
+       if (AnsiMatchText(ExtractDelimited(2, Editor.Lines[l], [' ']), ['GOTO', 'JZERO', 'JNZERO'])) AND (RegisterMachine.verifyCommand(Editor.Lines[l]) = '') then
+       //if command is GOTO, JZERO or JNZERO
       begin
+        //find referred line
         referrerIndex := StrToInt(ExtractDelimited(3, Editor.Lines[l], [' ']));
         for m := 0 to Editor.Lines.Count - 1 do
         begin
         if RegisterMachine.verifyCommand(Editor.Lines[m]) = '' then
         begin
         refIndex:= StrToInt(ExtractDelimited(1, Editor.Lines[m], [' ']));
+        //if the referred line's index is bigger than the referrer line it's a forward Index Change otherwise it's backward
         if referrerIndex = refIndex  then
          begin
            if l < m then
@@ -237,6 +238,7 @@ var
 
 begin
   pos := editor.CaretPos;
+  oldLineLength:= Length(Editor.Lines[pos.y]); //necessary for recalculation of cursor position in memo
   b := 0;
   fillVerifiedCommands;
   findIndexChanges;
@@ -246,6 +248,7 @@ begin
     begin
       line := Editor.Lines[i];
       line := UpperCase(IntToStr(b) + ' ' + ExtractDelimited(2, line, [' ']) + ' ' + ExtractDelimited(3, line, [' '])); //updates index
+      //implementation of forward Index Changes
       for j := 0 to High(forwardC) do
       begin
       if forwardC[j][0] = Editor.Lines[i] then  //if the actual line will be changed, the string in forwardC will be too
@@ -258,7 +261,7 @@ begin
       Editor.Lines[Editor.Lines.IndexOf(referrer)] := ExtractDelimited(1, referrer, [' ']) + ' ' + ExtractDelimited(2, referrer, [' ']) + ' ' + IntToStr(b) ;
       end;
       end;
-
+      //implementation of backward Index Changes
       for j := 0 to High(backwardC) do
       begin
       if backwardC[j][1] = Editor.Lines[i] then
@@ -275,7 +278,7 @@ begin
       Editor.Lines[i] := line;
     end;
   end;
-  goToLine(pos.x - 1, pos.y);
+  goToLine(pos.x + Length(Editor.Lines[pos.y]) - oldLineLength, pos.y); //recalculation of cursor position
 end;
 
 procedure TReMEdit.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -288,6 +291,7 @@ begin
   oldFile := TStringList.Create;
   newFile := TStringList.Create;
   newFile.AddStrings(Editor.Lines);
+  //Determines, if file has changed
   try
     oldFile.LoadFromFile(actualFile);
     for i := 0 to newFile.Count - 1 do
@@ -350,9 +354,10 @@ begin
   loadedList := TStringList.Create;
   loadedList.AddStrings(Editor.Lines);
   regM := RegisterMachine.Create(loadedList);
-  //ERROR HANDLING NECESSARY
+
   if regM.GetErrorMessage <> '' then
   begin
+    //ERROR HANDLING
     TabError.TabVisible := True;
     Pages.ActivePage := TabError;
     ErrorOutput.Clear;
@@ -360,6 +365,7 @@ begin
   end
   else
   begin
+    //INITIALIZATION for TabExecute
     if actualFile <> '' then
       Editor.Lines.SaveToFile(actualFile);
     TabError.TabVisible := False;
@@ -407,10 +413,11 @@ begin
   initializeExecuteSG(Length(regM.GetRegisterData));
   for i := 1 to Length(regM.GetExecuteLog) do
   begin
-    if cancelExecute then
+    if cancelExecute then  //Cancel button is pressed stop procedure
       exit;
     with ExecuteSG do
     begin
+      //Adds new line in ExecuteSG
       RowCount := RowCount + 1;
       Row := RowCount;
       Cells[0, i] := IntToStr(i);
@@ -429,6 +436,7 @@ begin
       ExecuteSG.Cells[4 + j, i] := IntToStr(regM.GetExecuteLog[i - 1].registers[j]);
     end;
 
+    //colors Registers
     colorRegister := -1;
     if AnsiMatchText(regM.GetExecuteLog[i - 1].command.command,
       ['LOAD', 'CLOAD', 'CADD', 'CSUB', 'CMULT', 'CDIV', 'MULT',
@@ -443,6 +451,7 @@ begin
       markedCells[High(markedCells)][0] := 3 + colorRegister;
       markedCells[High(markedCells)][1] := i;
     end;
+
     Delay;
   end;
   CancelExecuteBtnClick(nil);
@@ -465,6 +474,8 @@ var
   end;
 
 begin
+  //changes color of ExecuteSG cells
+  //grey cells
   for i := 0 to High(markedCells) do
   begin
     if (ACol = markedCells[i][0]) and (ARow = markedCells[i][1]) then
@@ -472,7 +483,7 @@ begin
       colorCell(aRect, ExecuteSG.Cells[ACol, ARow], clSilver);
     end;
   end;
-
+  //green cells
   if ARow = Length(regM.GetExecuteLog) then
   begin
     colorCell(aRect, ExecuteSG.Cells[ACol, ARow], clGreen);
@@ -481,8 +492,6 @@ begin
 end;
 
 procedure TReMEdit.FormCreate(Sender: TObject);
-var
-  s: TTextStyle;
 begin
   //VARIABLE INITIALIZATION
   actualFile := 'Beispiele/Zahlenvergleich.txt';

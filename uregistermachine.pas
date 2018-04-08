@@ -37,6 +37,7 @@ type
     rawStringData: TStringList;
     executeLog: commandLogSum;
     errorMessage: string;
+    //RegisterMachine FUNCTIONS/COMMANDS
     function LOAD(c: Word): String;
     function STORE(c : Word) : String;
     function ADD(c : Word) : String;
@@ -214,20 +215,14 @@ end;
 
 constructor RegisterMachine.Create(rawStringList: TStringList);
 begin
-  SetErrorMessage('');
-  rawStringData := rawStringList;
+  SetErrorMessage(''); //initialize ErrorMessage
+  rawStringData := rawStringList; //pass Data
   ProcessFile;
   RenderCommands;
   RenderRegisters;
 end;
 
-{checks if command is legal
-0: legal
-ERRORS:
-1: illegal index
-2: illegal command
-3: illegal value
-}
+//checks if command is legal with Error feedback
 class function RegisterMachine.verifyCommand(s: String): String;
 var
   temp : Integer;
@@ -246,11 +241,11 @@ begin
   DeleteComments(s, '//');
   s:= trim(s);
   line := UpperCase(ExtractDelimited(2, s, [' ']));
-  if not AnsiMatchText(line, commands) then
+  if not AnsiMatchText(line, commands) then  //Type 2 Error: illegal command
     addToResult(errM, s + ': illegal command ' + line);
-  if not TryStrToInt(ExtractDelimited(1, s, [' ']), temp) then
+  if not TryStrToInt(ExtractDelimited(1, s, [' ']), temp) then //Type 1 Error illegal index
     addToResult(errM, s + ': illegal index ' + ExtractDelimited(1, s, [' ']));
-  if (line <> 'END') AND (not TryStrToInt(ExtractDelimited(3, s, [' ']), temp)) then
+  if (line <> 'END') AND (not TryStrToInt(ExtractDelimited(3, s, [' ']), temp)) then //Type 3 Error illegal value
     addToResult(errM, s + ': illegal value ' + ExtractDelimited(3, s, [' ']));
   if (line = 'END') AND (Pos('END',s) <> Length(s) - 2) then
     addToResult(errM, s + ': illegal value ' + ExtractDelimited(3, s, [' ']));
@@ -322,6 +317,7 @@ var
   tempStr: string;
   i: integer;
 begin
+  //Deletes Comments and empty lines
   GetRawStringData.Sort;
   i := 0;
   while i <> GetRawStringData.Count do
@@ -343,6 +339,7 @@ procedure RegisterMachine.RenderRegisters;
 var
   amount, i: integer;
 begin
+  //Determines amount of registers
   amount := 0;
   for i := 0 to Length(GetProgramData) - 1 do
   begin
@@ -360,6 +357,7 @@ var
   actualLine: commandLine;
   error : String;
 begin
+  //creates programData with Error Handling
   for i := 0 to GetRawStringData.Count - 1 do
   begin
        error:= verifyCommand(GetRawStringData.Strings[i]);
@@ -393,6 +391,7 @@ begin
   Result := true;
   SetLength(executeLog, 1);
   SetRegisterData(0, 0);
+  //fill RegisterData
   for i := 0 to High(regs) do
   begin
   SetRegisterData(regs[i], i + 1);
@@ -404,6 +403,7 @@ begin
   line.Value:= 0;
   with GetExecuteLog[0] do
   begin
+  //first Line of log
   sysOutput:= 'Anfangszustand';
   registers := Copy(GetRegisterData, 0, Length(GetRegisterData));
   command.command := '';
@@ -415,6 +415,7 @@ begin
       line := GetProgramData[b];
          SetLength(executeLog, i + 1);
          GetExecuteLog[i].b := IntToStr(b);
+         //invoke specific function
          case line.command of
          'LOAD' : GetExecuteLog[i].sysOutput:= LOAD(line.value);
          'STORE' : GetExecuteLog[i].sysOutput:= STORE(line.value);
@@ -432,14 +433,15 @@ begin
          'JZERO' : GetExecuteLog[i].sysOutput:= JZERO(line.value, b);
          'JNZERO' : GetExecuteLog[i].sysOutput:= JNZERO(line.value, b);
          end;
-
+         //set log
          GetExecuteLog[i].command := line;
          GetExecuteLog[i].registers := Copy(GetRegisterData, 0, Length(GetRegisterData));
+         //if command is not a move command increment b
          if not AnsiMatchText(line.command, moveCommands) then
          b := b + 1;
          i := i + 1;
-
-         if i > 1000 then
+         //Handles infinity loops
+         if i > 2000 then
          begin
          Result := false;
          Break;

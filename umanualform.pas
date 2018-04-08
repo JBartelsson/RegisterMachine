@@ -26,7 +26,6 @@ type
     TabTheory: TTabSheet;
     TabManual: TTabSheet;
     procedure CloseBtnClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
   private
     { private declarations }
@@ -46,19 +45,6 @@ implementation
 procedure TmanualForm.CloseBtnClick(Sender: TObject);
 begin
   Hide;
-end;
-
-procedure TmanualForm.FormCreate(Sender: TObject);
-var i : Integer;
-
-begin
-  //Image1.Picture.LoadFromFile('images\1.jpg');
-  //for i := 0 to 5 do
-  //begin
-  //  temp := TBitmap.Create;
-  //  ImageList1.add;
-  //end;
-
 end;
 
 procedure TmanualForm.FormResize(Sender: TObject);
