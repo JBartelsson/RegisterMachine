@@ -1,33 +1,34 @@
 object ReMEdit: TReMEdit
-  Left = 528
+  Left = 399
   Height = 600
-  Top = 122
-  Width = 777
+  Top = 271
+  Width = 788
   Caption = 'ReMEdit 1.0'
   ClientHeight = 600
-  ClientWidth = 777
+  ClientWidth = 788
   Color = clSilver
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   LCLVersion = '1.4.4.0'
   object Pages: TPageControl
     Left = 0
     Height = 568
     Top = 0
-    Width = 777
-    ActivePage = TabSetUp
+    Width = 788
+    ActivePage = TabWrite
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 0
     object TabWrite: TTabSheet
       Caption = 'Erstellen'
       ClientHeight = 540
-      ClientWidth = 769
+      ClientWidth = 780
       ParentFont = False
       object HeadingLeft: TPanel
         Left = 0
         Height = 62
         Top = 4
-        Width = 441
+        Width = 452
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Right = 1
         BevelInner = bvLowered
@@ -46,7 +47,7 @@ object ReMEdit: TReMEdit
         Left = 0
         Height = 61
         Top = 476
-        Width = 769
+        Width = 780
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Top = 2
         Caption = 'Registermaschine erstellen'
@@ -58,7 +59,7 @@ object ReMEdit: TReMEdit
       object LoadFile: TButton
         AnchorSideLeft.Control = HeadingLeft
         AnchorSideLeft.Side = asrBottom
-        Left = 442
+        Left = 453
         Height = 62
         Top = 4
         Width = 167
@@ -71,7 +72,7 @@ object ReMEdit: TReMEdit
       object SaveFile: TButton
         AnchorSideLeft.Control = LoadFile
         AnchorSideLeft.Side = asrBottom
-        Left = 609
+        Left = 620
         Height = 62
         Top = 4
         Width = 160
@@ -85,7 +86,7 @@ object ReMEdit: TReMEdit
         Left = 0
         Height = 402
         Top = 72
-        Width = 769
+        Width = 780
         Anchors = [akTop, akLeft, akRight, akBottom]
         Font.Name = 'Courier New'
         ParentFont = False
@@ -97,12 +98,12 @@ object ReMEdit: TReMEdit
     object TabError: TTabSheet
       Caption = 'Nachrichten'
       ClientHeight = 540
-      ClientWidth = 769
+      ClientWidth = 780
       object HeadingError: TPanel
         Left = 8
         Height = 50
         Top = 8
-        Width = 752
+        Width = 763
         Anchors = [akTop, akLeft, akRight]
         BevelInner = bvLowered
         BorderStyle = bsSingle
@@ -117,7 +118,7 @@ object ReMEdit: TReMEdit
         Left = 8
         Height = 458
         Top = 64
-        Width = 752
+        Width = 763
         Anchors = [akTop, akLeft, akRight, akBottom]
         ReadOnly = True
         TabOrder = 1
@@ -126,24 +127,24 @@ object ReMEdit: TReMEdit
     object TabSetUp: TTabSheet
       Caption = 'Ausführen'
       ClientHeight = 540
-      ClientWidth = 769
+      ClientWidth = 780
       TabVisible = False
       object SpeedContainer: TPanel
         AnchorSideLeft.Side = asrBottom
         Left = 176
         Height = 50
         Top = 200
-        Width = 418
+        Width = 429
         Anchors = [akTop, akLeft, akRight]
         ClientHeight = 50
-        ClientWidth = 418
+        ClientWidth = 429
         TabOrder = 4
         object SpeedTrackBar: TTrackBar
           AnchorSideLeft.Side = asrCenter
           Left = 240
           Height = 39
           Top = 6
-          Width = 170
+          Width = 181
           Max = 1500
           Min = 1
           PageSize = 10
@@ -171,7 +172,7 @@ object ReMEdit: TReMEdit
         Left = 0
         Height = 112
         Top = 40
-        Width = 769
+        Width = 780
         Anchors = [akTop, akLeft, akRight]
         BorderStyle = bsNone
         ColCount = 0
@@ -192,7 +193,7 @@ object ReMEdit: TReMEdit
         Left = 112
         Height = 28
         Top = 0
-        Width = 534
+        Width = 545
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Belege die Register (Unbelegte Register werden auf 0 gesetzt)'
         Font.Height = -20
@@ -200,10 +201,11 @@ object ReMEdit: TReMEdit
         ParentFont = False
       end
       object ExecuteSG: TStringGrid
+        AnchorSideRight.Side = asrBottom
         Left = 0
         Height = 288
         Top = 256
-        Width = 770
+        Width = 781
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderStyle = bsNone
         Color = clNone
@@ -239,7 +241,7 @@ object ReMEdit: TReMEdit
         Left = 608
         Height = 49
         Top = 152
-        Width = 160
+        Width = 171
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Abbrechen'
         Font.Height = -27
@@ -258,7 +260,7 @@ object ReMEdit: TReMEdit
     Left = 0
     Height = 32
     Top = 568
-    Width = 777
+    Width = 788
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'Anwendung schließen'
     Kind = bkClose

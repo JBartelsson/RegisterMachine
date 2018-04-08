@@ -5,7 +5,7 @@ unit ugraphicsform;
 interface
 
 uses
-  Classes, SysUtils, FileUtil,  Forms, Controls, Graphics, Dialogs,
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   ComCtrls, StdCtrls, ExtCtrls, Grids, Buttons, ValEdit, Menus, Windows,
   strutils, uregistermachine;
 
@@ -38,8 +38,10 @@ type
     TabError: TTabSheet;
     TabWrite: TTabSheet;
     SpeedTrackBar: TTrackBar;
+    procedure save(fileSource: string);
     procedure CancelExecuteBtnClick(Sender: TObject);
     procedure fillIndicesClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure SaveFileClick(Sender: TObject);
     procedure CloseBtnClick(Sender: TObject);
     procedure CreateMachine(Sender: TObject);
@@ -62,9 +64,8 @@ var
   loadedList: TStringList;
   regM: RegisterMachine;
   markedCells: array of array[0..1] of integer;
-  executeFinished: boolean;
-  cancelExecute : boolean;
-  actualFile : String;
+  cancelExecute: boolean;
+  actualFile: string;
 
 implementation
 
@@ -93,7 +94,6 @@ procedure TReMEdit.initializeExecuteSG(registerAmount: integer);
 var
   i: integer;
 begin
-  executeFinished := False;
   RegisterSG.Enabled := False;
   ExecuteBtn.Enabled := False;
   CancelExecuteBtn.Enabled := True;
@@ -103,7 +103,7 @@ begin
     Visible := True;
     ColCount := 4 + registerAmount;
     RowCount := 1;
-    Cells[0,0] := 'i';
+    Cells[0, 0] := 'i';
     Cells[1, 0] := 'b';
     Cells[2, 0] := 'Zeile';
     Cells[3, 0] := 'Effekt';
@@ -157,53 +157,167 @@ procedure TReMEdit.SaveFileClick(Sender: TObject);
 begin
   if SaveRegister.Execute then
   begin
-    Editor.Lines.SaveToFile(SaveRegister.FileName);
-    actualFile := SaveRegister.FileName;
+    save(SaveRegister.FileName);
   end;
 
 end;
 
 procedure TReMEdit.fillIndicesClick(Sender: TObject);
 var
-  i, b, oldStringLength: integer;
+  i, j, b, oldStringLength: integer;
   pos: TPOINT;
-  line: string;
+  line, refLine, referrer: string;
   setB: boolean;
+  forwardC, backwardC : array of array[0..1] of String;
+
+  procedure fillVerifiedCommands;
+  var
+    k : Integer;
+    actLine : String;
+  begin
+    for k := 0 to Editor.Lines.Count - 1 do
+    begin
+    line := trim(Editor.Lines[k]);
+    if RegisterMachine.verifyCommand('0 ' + line) = '' then  //else it adds an artificial index to check if the user hasn't written any
+         Editor.Lines[k] := '0 ' + line;
+    end;
+  end;
+
+  procedure findIndexChanges;
+  var
+    l, m, refIndex, referrerIndex: Integer;
+  begin
+     for l:= 0 to Editor.Lines.Count - 1 do
+     begin
+       if (AnsiMatchText(ExtractDelimited(2, Editor.Lines[l], [' ']), ['GOTO', 'JZERO', 'JNZERO'])) AND (RegisterMachine.verifyCommand(Editor.Lines[l]) = '') then //checks for changed values in the referred line of GOTO, JZERO and END
+      begin
+        referrerIndex := StrToInt(ExtractDelimited(3, Editor.Lines[l], [' ']));
+        for m := 0 to Editor.Lines.Count - 1 do
+        begin
+        if RegisterMachine.verifyCommand(Editor.Lines[m]) = '' then
+        begin
+        refIndex:= StrToInt(ExtractDelimited(1, Editor.Lines[m], [' ']));
+        if referrerIndex = refIndex  then
+         begin
+           if l < m then
+           begin
+           SetLength(forwardC, Length(forwardC) + 1);
+           forwardC[High(forwardC)][0] := Editor.Lines[l];
+           forwardC[High(forwardC)][1] := Editor.Lines[m];
+           end
+           else
+           begin
+           SetLength(backwardC, Length(backwardC) + 1);
+           backwardC[High(backwardC)][0] := Editor.Lines[l];
+           backwardC[High(backwardC)][1] := Editor.Lines[m];
+           end;
+           break;
+         end;
+        end;
+        end;
+      end;
+     end;
+  end;
+
 begin
   pos := editor.CaretPos;
   b := 0;
+  fillVerifiedCommands;
+  findIndexChanges;
   for i := 0 to Editor.Lines.Count - 1 do
   begin
-    setB := False;
-    line := trim(Editor.Lines[i]);
-    oldStringLength := Length(line);
-    if RegisterMachine.verifyCommand(line) = '' then
-      setB := True
-    else
+    if RegisterMachine.verifyCommand(Editor.Lines[i]) = '' then  //if command legal
     begin
-      line := '0 ' + line;
-      if RegisterMachine.verifyCommand(line) = '' then
-        setB := True;
-    end;
-    line := ExtractDelimited(2, line, [' ']) + ' ' + ExtractDelimited(3, line, [' ']);
-    if setB = True then
-    begin
-      line := IntToStr(b) + ' ' + line;
+      line := Editor.Lines[i];
+      line := UpperCase(IntToStr(b) + ' ' + ExtractDelimited(2, line, [' ']) + ' ' + ExtractDelimited(3, line, [' '])); //updates index
+      for j := 0 to High(forwardC) do
+      begin
+      if forwardC[j][0] = Editor.Lines[i] then  //if the actual line will be changed, the string in forwardC will be too
+      begin
+        forwardC[j][0] := line;
+      end;
+      if forwardC[j][1] = Editor.Lines[i] then
+      begin
+      referrer := forwardC[j][0];
+      Editor.Lines[Editor.Lines.IndexOf(referrer)] := ExtractDelimited(1, referrer, [' ']) + ' ' + ExtractDelimited(2, referrer, [' ']) + ' ' + IntToStr(b) ;
+      end;
+      end;
+
+      for j := 0 to High(backwardC) do
+      begin
+      if backwardC[j][1] = Editor.Lines[i] then
+      begin
+        backwardC[j][1] := line;
+      end;
+      if backwardC[j][0] = Editor.Lines[i] then
+      begin
+      refLine:= backwardC[j][1];
+      line := ExtractDelimited(1, line, [' ']) + ' ' + ExtractDelimited(2, line, [' ']) + ' ' + ExtractDelimited(1, refLine, [' ']) ;
+      end;
+      end;
       b := b + 1;
-      Editor.Lines[i] := UpperCase(line);
-      if i = pos.y then
-        pos.x := pos.x + Length(line) - oldStringLength;
+      Editor.Lines[i] := line;
+      //adds new index
+
+
+      //if i = pos.y then  //calculates new cursor position
+      //  pos.x := pos.x + Length(line) - oldStringLength;
     end;
   end;
   goToLine(pos.x - 1, pos.y);
 end;
 
+procedure TReMEdit.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+var
+  i: integer;
+  fileSaved: boolean;
+  oldFile, newFile: TStringList;
+begin
+  fileSaved := True;
+  oldFile := TStringList.Create;
+  newFile := TStringList.Create;
+  newFile.AddStrings(Editor.Lines);
+  try
+    oldFile.LoadFromFile(actualFile);
+    for i := 0 to newFile.Count - 1 do
+    begin
+      try
+        if trim(newFile.Strings[i]) <> trim(oldFile.Strings[i]) then
+        begin
+          fileSaved := False;
+          break;
+        end;
+      except
+        fileSaved := False;
+        break;
+      end;
+    end;
+  except
+    fileSaved := False;
+  end;
+
+  if not fileSaved then
+  begin
+    if MessageDlg('Warnung', 'Sie haben ungespeicherte Änderungen. Wollen Sie die Anwendung wirklich schließen?',
+      mtWarning, mbOKCancel, 0) = mrOk then
+      CanClose := True
+    else
+      CanClose := False;
+  end;
+end;
+
+procedure TReMEdit.save(fileSource: string);
+begin
+  actualFile := fileSource;
+  Editor.Lines.SaveToFile(fileSource);
+end;
+
 procedure TReMEdit.CancelExecuteBtnClick(Sender: TObject);
 begin
-   cancelExecute:= true;
-   CancelExecuteBtn.Enabled:= false;
-   ExecuteBtn.Enabled:= true;
-   RegisterSG.Enabled:= true;
+  cancelExecute := True;
+  CancelExecuteBtn.Enabled := False;
+  ExecuteBtn.Enabled := True;
+  RegisterSG.Enabled := True;
 end;
 
 //CREATE
@@ -225,8 +339,8 @@ begin
   else
   begin
     if actualFile <> '' then
-    Editor.Lines.SaveToFile(actualFile);
-    TabError.TabVisible:=false;
+      Editor.Lines.SaveToFile(actualFile);
+    TabError.TabVisible := False;
     with RegisterSG do
     begin
       RowCount := 2;
@@ -253,7 +367,7 @@ var
   h: commandLine;
 
 begin
-  cancelExecute:= false;
+  cancelExecute := False;
   SetLength(values, RegisterSG.ColCount);
   for i := 0 to RegisterSG.ColCount - 1 do
   begin
@@ -261,8 +375,10 @@ begin
   end;
   if not regM.Execute(values) then
   begin
-    if MessageDlg('Warnung','Möglicherweise wird die Registermaschine nie beendet. Ein manueller Abbruch ist bei Fortfahren eventuell erforderlich.', mtWarning, mbOKCancel, 0) = mrCancel then
-    exit;
+    if MessageDlg('Warnung',
+      'Möglicherweise wird die Registermaschine nie beendet. Ein manueller Abbruch ist bei Fortfahren eventuell erforderlich.',
+      mtWarning, mbOKCancel, 0) = mrCancel then
+      exit;
   end;
 
 
@@ -270,7 +386,7 @@ begin
   for i := 1 to Length(regM.GetExecuteLog) do
   begin
     if cancelExecute then
-    exit;
+      exit;
     with ExecuteSG do
     begin
       RowCount := RowCount + 1;
@@ -293,7 +409,8 @@ begin
 
     colorRegister := -1;
     if AnsiMatchText(regM.GetExecuteLog[i - 1].command.command,
-      ['LOAD', 'CLOAD', 'CADD', 'CSUB', 'CMULT', 'CDIV', 'MULT', 'ADD', 'SUB', 'DIV']) then
+      ['LOAD', 'CLOAD', 'CADD', 'CSUB', 'CMULT', 'CDIV', 'MULT',
+      'ADD', 'SUB', 'DIV']) then
       colorRegister := 0
     else if regM.GetExecuteLog[i - 1].command.command = 'STORE' then
       colorRegister := regM.GetExecuteLog[i - 1].command.Value;
@@ -315,13 +432,13 @@ procedure TReMEdit.ExecuteSGDrawCell(Sender: TObject; aCol, aRow: integer;
 var
   i: integer;
 
-  procedure colorCell(aRect: TRect; cellText: String; brushColor: TColor);
+  procedure colorCell(aRect: TRect; cellText: string; brushColor: TColor);
   begin
     with ExecuteSG do
     begin
-    Canvas.Brush.Color := brushColor;
-    Canvas.FillRect(aRect);
-    Canvas.TextOut(aRect.Left + 2, aRect.Top + 2, cellText);
+      Canvas.Brush.Color := brushColor;
+      Canvas.FillRect(aRect);
+      Canvas.TextOut(aRect.Left + 2, aRect.Top + 2, cellText);
     end;
   end;
 
@@ -330,7 +447,7 @@ begin
   begin
     if (ACol = markedCells[i][0]) and (ARow = markedCells[i][1]) then
     begin
-       colorCell(aRect, ExecuteSG.Cells[ACol, ARow], clSilver);
+      colorCell(aRect, ExecuteSG.Cells[ACol, ARow], clSilver);
     end;
   end;
 
@@ -346,19 +463,16 @@ var
   s: TTextStyle;
 begin
   //VARIABLE INITIALIZATION
-  actualFile:= '';
-  cancelExecute:= false;
+  actualFile := '';
+  cancelExecute := False;
   SetLength(markedCells, 0);
   Editor.Lines.LoadFromFile('Beispiele/Zahlenvergleich.txt');
 
   //LAYOUT INITIALIZATION
   Pages.ActivePage := TabWrite;
   TabSetUp.TabVisible := False;
-  TabError.TabVisible:= false;
+  TabError.TabVisible := False;
   Pages.Color := clGray;
-
-  //
-
 
 end;
 
