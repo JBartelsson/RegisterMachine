@@ -7,19 +7,23 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   ComCtrls, StdCtrls, ExtCtrls, Grids, Buttons, ValEdit, Menus, Windows,
-  strutils, uregistermachine;
+  strutils, uregistermachine, umanualform;
 
 type
 
   { TReMEdit }
 
   TReMEdit = class(TForm)
+    openWriteBtn: TButton;
     CloseBtn: TBitBtn;
     Editor: TMemo;
     fillIndicesPop: TPopupMenu;
     fillIndices: TMenuItem;
     ErrorOutput: TMemo;
     HeadingError: TPanel;
+    HeadingStart: TPanel;
+    openManualBtn: TButton;
+    saveMenu: TMenuItem;
     SpeedContainer: TPanel;
     SaveRegister: TSaveDialog;
     SaveFile: TButton;
@@ -36,8 +40,11 @@ type
     ExecuteSG: TStringGrid;
     TabSetUp: TTabSheet;
     TabError: TTabSheet;
+    TabStart: TTabSheet;
     TabWrite: TTabSheet;
     SpeedTrackBar: TTrackBar;
+    procedure openManualBtnClick(Sender: TObject);
+    procedure openWriteBtnClick(Sender: TObject);
     procedure save(fileSource: string);
     procedure CancelExecuteBtnClick(Sender: TObject);
     procedure fillIndicesClick(Sender: TObject);
@@ -53,6 +60,7 @@ type
     procedure initializeExecuteSG(registerAmount: integer);
     procedure Delay;
     procedure goToLine(X, Y: integer);
+    procedure saveMenuClick(Sender: TObject);
   private
     { private declarations }
   public
@@ -145,6 +153,14 @@ begin
     end;
   end;
 
+end;
+
+procedure TReMEdit.saveMenuClick(Sender: TObject);
+begin
+  if actualFile <> '' then
+  save(actualFile)
+  else
+    SaveFileClick(nil);
 end;
 
 
@@ -307,6 +323,17 @@ begin
   Editor.Lines.SaveToFile(fileSource);
 end;
 
+procedure TReMEdit.openWriteBtnClick(Sender: TObject);
+begin
+  TabWrite.TabVisible:= true;
+  Pages.ActivePage := TabWrite;
+end;
+
+procedure TReMEdit.openManualBtnClick(Sender: TObject);
+begin
+  manualform.Show;
+end;
+
 procedure TReMEdit.CancelExecuteBtnClick(Sender: TObject);
 begin
   cancelExecute := True;
@@ -458,13 +485,14 @@ var
   s: TTextStyle;
 begin
   //VARIABLE INITIALIZATION
-  actualFile := '';
+  actualFile := 'Beispiele/Zahlenvergleich.txt';
   cancelExecute := False;
   SetLength(markedCells, 0);
-  Editor.Lines.LoadFromFile('Beispiele/Zahlenvergleich.txt');
+  Editor.Lines.LoadFromFile(actualFile);
 
   //LAYOUT INITIALIZATION
-  Pages.ActivePage := TabWrite;
+  Pages.ActivePage := TabStart;
+  TabWrite.TabVisible:= false;
   TabSetUp.TabVisible := False;
   TabError.TabVisible := False;
   Pages.Color := clGray;

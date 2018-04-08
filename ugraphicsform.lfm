@@ -2,10 +2,10 @@ object ReMEdit: TReMEdit
   Left = 399
   Height = 600
   Top = 271
-  Width = 788
+  Width = 791
   Caption = 'ReMEdit 1.0'
   ClientHeight = 600
-  ClientWidth = 788
+  ClientWidth = 791
   Color = clSilver
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -14,21 +14,65 @@ object ReMEdit: TReMEdit
     Left = 0
     Height = 568
     Top = 0
-    Width = 788
-    ActivePage = TabWrite
+    Width = 791
+    ActivePage = TabSetUp
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    TabIndex = 3
     TabOrder = 0
+    object TabStart: TTabSheet
+      Caption = 'Start'
+      ClientHeight = 540
+      ClientWidth = 783
+      object HeadingStart: TPanel
+        Left = 0
+        Height = 62
+        Top = 4
+        Width = 779
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Right = 1
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Caption = 'Willkommen'
+        Color = clGreen
+        Constraints.MinWidth = 440
+        Font.Height = -37
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+      end
+      object openWriteBtn: TButton
+        Left = 2
+        Height = 72
+        Top = 152
+        Width = 777
+        Caption = 'Registermaschinen-Editor öffnen'
+        Font.Height = -27
+        OnClick = openWriteBtnClick
+        ParentFont = False
+        TabOrder = 1
+      end
+      object openManualBtn: TButton
+        Left = 2
+        Height = 72
+        Top = 72
+        Width = 777
+        Caption = 'Bedienungsanleitung/Theorie öffnen'
+        Font.Height = -27
+        OnClick = openManualBtnClick
+        ParentFont = False
+        TabOrder = 2
+      end
+    end
     object TabWrite: TTabSheet
       Caption = 'Erstellen'
       ClientHeight = 540
-      ClientWidth = 780
+      ClientWidth = 783
       ParentFont = False
       object HeadingLeft: TPanel
         Left = 0
         Height = 62
         Top = 4
-        Width = 452
+        Width = 455
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Right = 1
         BevelInner = bvLowered
@@ -47,7 +91,7 @@ object ReMEdit: TReMEdit
         Left = 0
         Height = 61
         Top = 476
-        Width = 780
+        Width = 783
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Top = 2
         Caption = 'Registermaschine erstellen'
@@ -59,7 +103,7 @@ object ReMEdit: TReMEdit
       object LoadFile: TButton
         AnchorSideLeft.Control = HeadingLeft
         AnchorSideLeft.Side = asrBottom
-        Left = 453
+        Left = 456
         Height = 62
         Top = 4
         Width = 167
@@ -72,12 +116,12 @@ object ReMEdit: TReMEdit
       object SaveFile: TButton
         AnchorSideLeft.Control = LoadFile
         AnchorSideLeft.Side = asrBottom
-        Left = 620
+        Left = 623
         Height = 62
         Top = 4
         Width = 160
         Anchors = [akTop, akLeft, akRight]
-        Caption = 'Registermaschine speichern'
+        Caption = 'Speichern Unter'
         Constraints.MinWidth = 160
         OnClick = SaveFileClick
         TabOrder = 3
@@ -86,7 +130,7 @@ object ReMEdit: TReMEdit
         Left = 0
         Height = 402
         Top = 72
-        Width = 780
+        Width = 783
         Anchors = [akTop, akLeft, akRight, akBottom]
         Font.Name = 'Courier New'
         ParentFont = False
@@ -98,12 +142,12 @@ object ReMEdit: TReMEdit
     object TabError: TTabSheet
       Caption = 'Nachrichten'
       ClientHeight = 540
-      ClientWidth = 780
+      ClientWidth = 783
       object HeadingError: TPanel
         Left = 8
         Height = 50
         Top = 8
-        Width = 763
+        Width = 766
         Anchors = [akTop, akLeft, akRight]
         BevelInner = bvLowered
         BorderStyle = bsSingle
@@ -118,7 +162,7 @@ object ReMEdit: TReMEdit
         Left = 8
         Height = 458
         Top = 64
-        Width = 763
+        Width = 766
         Anchors = [akTop, akLeft, akRight, akBottom]
         ReadOnly = True
         TabOrder = 1
@@ -127,24 +171,24 @@ object ReMEdit: TReMEdit
     object TabSetUp: TTabSheet
       Caption = 'Ausführen'
       ClientHeight = 540
-      ClientWidth = 780
+      ClientWidth = 783
       TabVisible = False
       object SpeedContainer: TPanel
         AnchorSideLeft.Side = asrBottom
         Left = 176
         Height = 50
         Top = 200
-        Width = 429
+        Width = 432
         Anchors = [akTop, akLeft, akRight]
         ClientHeight = 50
-        ClientWidth = 429
+        ClientWidth = 432
         TabOrder = 4
         object SpeedTrackBar: TTrackBar
           AnchorSideLeft.Side = asrCenter
           Left = 240
           Height = 39
           Top = 6
-          Width = 181
+          Width = 184
           Max = 1500
           Min = 1
           PageSize = 10
@@ -172,7 +216,7 @@ object ReMEdit: TReMEdit
         Left = 0
         Height = 112
         Top = 40
-        Width = 780
+        Width = 783
         Anchors = [akTop, akLeft, akRight]
         BorderStyle = bsNone
         ColCount = 0
@@ -193,7 +237,7 @@ object ReMEdit: TReMEdit
         Left = 112
         Height = 28
         Top = 0
-        Width = 545
+        Width = 548
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Belege die Register (Unbelegte Register werden auf 0 gesetzt)'
         Font.Height = -20
@@ -205,7 +249,7 @@ object ReMEdit: TReMEdit
         Left = 0
         Height = 288
         Top = 256
-        Width = 781
+        Width = 784
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderStyle = bsNone
         Color = clNone
@@ -241,7 +285,7 @@ object ReMEdit: TReMEdit
         Left = 608
         Height = 49
         Top = 152
-        Width = 171
+        Width = 174
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Abbrechen'
         Font.Height = -27
@@ -260,7 +304,7 @@ object ReMEdit: TReMEdit
     Left = 0
     Height = 32
     Top = 568
-    Width = 788
+    Width = 791
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'Anwendung schließen'
     Kind = bkClose
@@ -288,6 +332,11 @@ object ReMEdit: TReMEdit
       Caption = 'Indices auffüllen'
       ShortCut = 16454
       OnClick = fillIndicesClick
+    end
+    object saveMenu: TMenuItem
+      Caption = 'Speichern'
+      ShortCut = 16467
+      OnClick = saveMenuClick
     end
   end
 end
