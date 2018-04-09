@@ -26,6 +26,7 @@ type
     TabTheory: TTabSheet;
     TabManual: TTabSheet;
     procedure CloseBtnClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
   private
     { private declarations }
@@ -45,6 +46,12 @@ implementation
 procedure TmanualForm.CloseBtnClick(Sender: TObject);
 begin
   Hide;
+end;
+
+procedure TmanualForm.FormCreate(Sender: TObject);
+begin
+  Height := Screen.Height;
+  Width := 600;
 end;
 
 procedure TmanualForm.FormResize(Sender: TObject);
