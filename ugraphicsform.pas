@@ -61,6 +61,7 @@ type
     procedure Delay;
     procedure goToLine(X, Y: integer);
     procedure saveMenuClick(Sender: TObject);
+    procedure updateCaption;
   private
     { private declarations }
   public
@@ -90,7 +91,9 @@ begin
     if OpenRegister.Execute then
     begin
       Editor.Clear;
-      Editor.Lines.LoadFromFile(OpenRegister.FileName);
+      actualFile := OpenRegister.FileName;
+      Editor.Lines.LoadFromFile(actualFile);
+      updateCaption;
     end
     else
       ShowMessage('Kein File ausgewählt');
@@ -161,6 +164,11 @@ begin
   save(actualFile)
   else
     SaveFileClick(nil);
+end;
+
+procedure TReMEdit.updateCaption;
+begin
+  Caption := 'ReMEdit 1.0 ' + ExtractFileName(actualFile);
 end;
 
 
@@ -325,6 +333,7 @@ procedure TReMEdit.save(fileSource: string);
 begin
   actualFile := fileSource;
   Editor.Lines.SaveToFile(fileSource);
+  updateCaption;
 end;
 
 procedure TReMEdit.openWriteBtnClick(Sender: TObject);
@@ -506,6 +515,8 @@ begin
   TabSetUp.TabVisible := False;
   TabError.TabVisible := False;
   Pages.Color := clGray;
+
+  updateCaption;
 
 end;
 

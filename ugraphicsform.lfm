@@ -15,9 +15,9 @@ object ReMEdit: TReMEdit
     Height = 568
     Top = 0
     Width = 791
-    ActivePage = TabWrite
+    ActivePage = TabStart
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object TabStart: TTabSheet
       Caption = 'Start'
@@ -320,7 +320,7 @@ object ReMEdit: TReMEdit
     top = 216
   end
   object SaveRegister: TSaveDialog
-    Filter = 'Registermaschine(.txt)|*.txt'
+    Filter = 'Registermaschine|*.txt'
     InitialDir = 'Beispiele/'
     left = 816
     top = 264

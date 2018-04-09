@@ -54,6 +54,7 @@
         <Filename Value="umanualform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="manualForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit3>
     </Units>
