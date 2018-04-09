@@ -1,4 +1,4 @@
-program Pregistermaschine;
+program ReMEdit;
 
 {$mode objfpc}{$H+}
 
@@ -13,9 +13,10 @@ uses
 {$R *.res}
 
 begin
+  Application.Title:='ReMEdit';
   RequireDerivedFormResource := True;
   Application.Initialize;
-  Application.CreateForm(TReMEdit, ReMEdit);
+  Application.CreateForm(TReMEditForm, ReMEditForm);
   Application.CreateForm(TmanualForm, manualForm);
   Application.Run;
 end.

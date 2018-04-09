@@ -1,4 +1,4 @@
-object ReMEdit: TReMEdit
+object ReMEditForm: TReMEditForm
   Left = 399
   Height = 600
   Top = 271

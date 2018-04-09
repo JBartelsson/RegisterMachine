@@ -11,9 +11,9 @@ uses
 
 type
 
-  { TReMEdit }
+  { TReMEditForm }
 
-  TReMEdit = class(TForm)
+  TReMEditForm = class(TForm)
     openWriteBtn: TButton;
     CloseBtn: TBitBtn;
     Editor: TMemo;
@@ -69,7 +69,7 @@ type
   end;
 
 var
-  ReMEdit: TReMEdit;
+  ReMEditForm: TReMEditForm;
   loadedList: TStringList;
   regM: RegisterMachine;
   markedCells: array of array[0..1] of integer;
@@ -81,8 +81,8 @@ implementation
 {$R *.lfm}
 {DELAY FUNCTION}
 
-{ TReMEdit }
-procedure TReMEdit.LoadFileClick(Sender: TObject);
+{ TReMEditForm }
+procedure TReMEditForm.LoadFileClick(Sender: TObject);
 begin
   if (Editor.Lines.Count <> 0) and
     (MessageDlg('', 'Alle nicht gespeicherten Fortschritte gehen verloren. Fortfahren?',
@@ -101,7 +101,7 @@ begin
 
 end;
 
-procedure TReMEdit.initializeExecuteSG(registerAmount: integer);
+procedure TReMEditForm.initializeExecuteSG(registerAmount: integer);
 var
   i: integer;
 begin
@@ -125,7 +125,7 @@ begin
   end;
 end;
 
-procedure TReMEdit.Delay;
+procedure TReMEditForm.Delay;
 var
   tc: DWORD;
 begin
@@ -135,7 +135,7 @@ begin
     Application.ProcessMessages;
 end;
 
-procedure TReMEdit.goToLine(X, Y: integer);
+procedure TReMEditForm.goToLine(X, Y: integer);
 var
   s: string;
   actLineNumber, i, cPos: integer;
@@ -158,7 +158,7 @@ begin
 
 end;
 
-procedure TReMEdit.saveMenuClick(Sender: TObject);
+procedure TReMEditForm.saveMenuClick(Sender: TObject);
 begin
   if actualFile <> '' then
   save(actualFile)
@@ -166,18 +166,18 @@ begin
     SaveFileClick(nil);
 end;
 
-procedure TReMEdit.updateCaption;
+procedure TReMEditForm.updateCaption;
 begin
   Caption := 'ReMEdit 1.0 ' + ExtractFileName(actualFile);
 end;
 
 
-procedure TReMEdit.CloseBtnClick(Sender: TObject);
+procedure TReMEditForm.CloseBtnClick(Sender: TObject);
 begin
   Close;
 end;
 
-procedure TReMEdit.SaveFileClick(Sender: TObject);
+procedure TReMEditForm.SaveFileClick(Sender: TObject);
 begin
   if SaveRegister.Execute then
   begin
@@ -186,7 +186,7 @@ begin
 
 end;
 
-procedure TReMEdit.fillIndicesClick(Sender: TObject);
+procedure TReMEditForm.fillIndicesClick(Sender: TObject);
 var
   i, j, b, oldLineLength: integer;
   pos: TPOINT;
@@ -289,7 +289,7 @@ begin
   goToLine(pos.x + Length(Editor.Lines[pos.y]) - oldLineLength, pos.y); //recalculation of cursor position
 end;
 
-procedure TReMEdit.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+procedure TReMEditForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   i: integer;
   fileSaved: boolean;
@@ -329,25 +329,25 @@ begin
   end;
 end;
 
-procedure TReMEdit.save(fileSource: string);
+procedure TReMEditForm.save(fileSource: string);
 begin
   actualFile := fileSource;
   Editor.Lines.SaveToFile(fileSource);
   updateCaption;
 end;
 
-procedure TReMEdit.openWriteBtnClick(Sender: TObject);
+procedure TReMEditForm.openWriteBtnClick(Sender: TObject);
 begin
   TabWrite.TabVisible:= true;
   Pages.ActivePage := TabWrite;
 end;
 
-procedure TReMEdit.openManualBtnClick(Sender: TObject);
+procedure TReMEditForm.openManualBtnClick(Sender: TObject);
 begin
   manualform.Show;
 end;
 
-procedure TReMEdit.CancelExecuteBtnClick(Sender: TObject);
+procedure TReMEditForm.CancelExecuteBtnClick(Sender: TObject);
 begin
   cancelExecute := True;
   CancelExecuteBtn.Enabled := False;
@@ -356,7 +356,7 @@ begin
 end;
 
 //CREATE
-procedure TReMEdit.CreateMachine(Sender: TObject);
+procedure TReMEditForm.CreateMachine(Sender: TObject);
 var
   i: integer;
 begin
@@ -398,7 +398,7 @@ begin
 end;
 
 //EXECUTE
-procedure TReMEdit.ExecuteBtnClick(Sender: TObject);
+procedure TReMEditForm.ExecuteBtnClick(Sender: TObject);
 var
   values: registerArray;
   i, j, colorRegister: integer;
@@ -468,7 +468,7 @@ begin
 
 end;
 
-procedure TReMEdit.ExecuteSGDrawCell(Sender: TObject; aCol, aRow: integer;
+procedure TReMEditForm.ExecuteSGDrawCell(Sender: TObject; aCol, aRow: integer;
   aRect: TRect; aState: TGridDrawState);
 var
   i: integer;
@@ -501,7 +501,7 @@ begin
 
 end;
 
-procedure TReMEdit.FormCreate(Sender: TObject);
+procedure TReMEditForm.FormCreate(Sender: TObject);
 begin
   //VARIABLE INITIALIZATION
   actualFile := 'Beispiele/Zahlenvergleich.txt';
