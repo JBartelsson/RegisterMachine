@@ -458,7 +458,7 @@ begin
     if colorRegister <> -1 then
     begin
       SetLength(markedCells, Length(markedCells) + 1);
-      markedCells[High(markedCells)][0] := 3 + colorRegister;
+      markedCells[High(markedCells)][0] := 4 + colorRegister;
       markedCells[High(markedCells)][1] := i;
     end;
 

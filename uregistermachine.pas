@@ -150,9 +150,20 @@ begin
 end;
 
 function RegisterMachine.CSUB(c: Longword): String;
+var
+  res : Integer;
 begin
-    SetRegisterData(GetRegisterData[0] - c, 0);
-    Result := 'A um ' + IntToStr(c) + ' verringert';
+    res := GetRegisterData[0] - c;
+   if res < 0 then
+   begin
+   GetRegisterData[0] := 0;
+     Result := 'A wird um ' + IntToStr(c) + ' bis auf 0 verringert';
+   end
+   else
+   begin
+     SetRegisterData(res, 0);
+     Result := 'A wird um ' + IntToStr(c) + ' verringert';
+   end;
 end;
 
 function RegisterMachine.CMULT(c: Longword): String;
@@ -414,7 +425,6 @@ begin
     begin
       line := GetProgramData[b];
          SetLength(executeLog, i + 1);
-         GetExecuteLog[i].b := IntToStr(b);
          //invoke specific function
          case line.command of
          'LOAD' : GetExecuteLog[i].sysOutput:= LOAD(line.value);
@@ -434,8 +444,10 @@ begin
          'JNZERO' : GetExecuteLog[i].sysOutput:= JNZERO(line.value, b);
          end;
          //set log
+         GetExecuteLog[i].b := IntToStr(b);
          GetExecuteLog[i].command := line;
-         GetExecuteLog[i].registers := Copy(GetRegisterData, 0, Length(GetRegisterData));
+         GetExecuteLog[i].registers := Copy(GetRegisterData, 0
+         ,Length(GetRegisterData));
          //if command is not a move command increment b
          if not AnsiMatchText(line.command, moveCommands) then
          b := b + 1;
